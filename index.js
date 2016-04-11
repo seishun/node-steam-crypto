@@ -1,6 +1,13 @@
 var crypto = require('crypto');
 var publicKey = require('fs').readFileSync(__dirname + '/public.pub');
 
+exports.verifySignature = function(data, signature, algorithm) {
+  var verify = crypto.createVerify(algorithm || "RSA-SHA1");
+  verify.update(data);
+  verify.end();
+  return verify.verify(publicKey, signature);
+};
+
 exports.generateSessionKey = function() {
   var sessionKey = crypto.randomBytes(32);
   var cryptedSessionKey = crypto.publicEncrypt(publicKey, sessionKey);
